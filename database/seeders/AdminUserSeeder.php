@@ -42,6 +42,10 @@ class AdminUserSeeder extends Seeder
                 'email' => 'henrique-lopes@outlook.com.br',
                 'email_verified_at' => now(),
                 'password' => Hash::make('admin123'),
+                'tenant_id' => $adminTenant->id,
+                'role' => 'super_admin',
+                'is_admin' => true,
+                'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ]
@@ -73,6 +77,10 @@ class AdminUserSeeder extends Seeder
                 'email' => 'admin@demo.com',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
+                'tenant_id' => $demoTenant->id,
+                'role' => 'admin',
+                'is_admin' => false,
+                'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ]
