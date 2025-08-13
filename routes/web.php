@@ -6,6 +6,7 @@ use App\Http\Controllers\TenantDashboardController;
 use App\Http\Controllers\TenantUserController;
 use App\Http\Controllers\LawyerController;
 use App\Http\Controllers\Auth\TenantAuthController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 /*

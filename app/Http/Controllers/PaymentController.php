@@ -19,6 +19,19 @@ class PaymentController extends Controller
         $tenantId = Session::get('blocked_tenant');
         $userId = Session::get('blocked_user');
 
+        // Modo de teste - simula tenant bloqueado
+        if (!$tenantId && request()->has('test')) {
+            $tenant = Tenant::first();
+            $user = User::first();
+            
+            if ($tenant && $user) {
+                $tenantId = $tenant->id;
+                $userId = $user->id;
+                Session::put('blocked_tenant', $tenantId);
+                Session::put('blocked_user', $userId);
+            }
+        }
+
         if (!$tenantId) {
             return redirect()->route('login')
                 ->with('error', 'Sessão inválida. Faça login novamente.');
