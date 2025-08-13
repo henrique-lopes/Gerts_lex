@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\LawyerController;
-use App\Http\Controllers\TenantController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TenantUserController;
+use App\Http\Controllers\TenantController;
 use App\Http\Controllers\TenantDashboardController;
+use App\Http\Controllers\TenantUserController;
+use App\Http\Controllers\LawyerController;
+use App\Http\Controllers\Auth\TenantAuthController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,18 +23,37 @@ Route::get("/", function () {
     return view("welcome");
 });
 
-// Admin routes (landlord)
-Route::prefix("admin")->name("admin.")->group(function () {
+// Authentication Routes (Custom Tenant Auth)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [TenantAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [TenantAuthController::class, 'login']);
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [TenantAuthController::class, 'logout'])->name('logout');
+    Route::get('/session-info', [TenantAuthController::class, 'sessionInfo'])->name('session.info');
+});
+
+// Payment Dashboard (for blocked tenants)
+Route::middleware('guest')->group(function () {
+    Route::get('/payment', [PaymentController::class, 'dashboard'])->name('payment.dashboard');
+    Route::post('/payment/process', [PaymentController::class, 'process'])->name('payment.process');
+});
+
+// Admin routes (landlord) - Super Admin only
+Route::prefix("admin")->name("admin.")->middleware(['auth', 'tenant.access'])->group(function () {
     Route::resource("tenants", TenantController::class);
     Route::post("tenants/{tenant}/suspend", [TenantController::class, "suspend"])->name("tenants.suspend");
     Route::post("tenants/{tenant}/activate", [TenantController::class, "activate"])->name("tenants.activate");
+    Route::post("tenants/{tenant}/update-payment", [TenantAuthController::class, "updatePaymentStatus"])->name("tenants.update-payment");
 });
 
-// Tenant routes
-Route::middleware(["auth", "verified"])->group(function () {
-    // Override default dashboard with tenant dashboard
+// Tenant routes - Protected by tenant access middleware
+Route::middleware(['auth', 'tenant.access'])->group(function () {
+    // Main dashboard
     Route::get("/dashboard", [TenantDashboardController::class, "index"])->name("dashboard");
-
+    Route::get("/tenant/dashboard", [TenantDashboardController::class, "index"])->name("tenant.dashboard");
+    
     // Lawyer Dashboard
     Route::get("/lawyer-dashboard", [App\Http\Controllers\LawyerDashboardController::class, "index"])->name("lawyer.dashboard");
 
@@ -43,7 +62,7 @@ Route::middleware(["auth", "verified"])->group(function () {
         Route::get("/settings", [TenantDashboardController::class, "settings"])->name("settings");
         Route::post("/settings", [TenantDashboardController::class, "updateSettings"])->name("settings.update");
         Route::get("/subscription", [TenantDashboardController::class, "subscription"])->name("subscription");
-
+        
         // User management for tenant
         Route::resource("users", TenantUserController::class);
 
@@ -74,18 +93,36 @@ Route::middleware(["auth", "verified"])->group(function () {
     });
 });
 
+// Premium features - Requires premium plan
+Route::middleware(['auth', 'tenant.access', 'tenant.premium'])->group(function () {
+    Route::prefix("premium")->name("premium.")->group(function () {
+        Route::get("/analytics", [AnalyticsController::class, "index"])->name("analytics");
+        Route::get("/reports", [ReportsController::class, "index"])->name("reports");
+        Route::get("/integrations", [IntegrationsController::class, "index"])->name("integrations");
+    });
+});
+
 // Public route for invited user registration
 Route::get("/register/invited", [TenantInvitationController::class, "showRegistrationForm"])->name("tenant.invitations.register");
 
-Route::middleware('auth')->group(function () {
+// Profile routes
+Route::middleware(['auth', 'tenant.access'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
-
-
-
 // Stripe Webhook
 Route::post("stripe/webhook", "\Laravel\Cashier\Http\Controllers\WebhookController@handle");
+
+// API Routes for AJAX calls
+Route::middleware(['auth', 'tenant.access'])->prefix('api')->name('api.')->group(function () {
+    Route::get('/tenant/info', [TenantAuthController::class, 'getCurrentTenant'])->name('tenant.info');
+    Route::get('/session/info', [TenantAuthController::class, 'sessionInfo'])->name('session.info');
+    Route::post('/payment/update-status', [TenantAuthController::class, 'updatePaymentStatus'])->name('payment.update-status');
+});
+
+// Remove default auth routes since we're using custom authentication
+// require __DIR__.'/auth.php';
+
+
