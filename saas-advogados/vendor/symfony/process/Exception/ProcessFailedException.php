@@ -36,7 +36,6 @@ class ProcessFailedException extends RuntimeException
         );
 
         if (!$process->isOutputDisabled()) {
-            $error .= \sprintf("\n\nOutput:\n================\n%s\n\nError Output:\n================\n%s",
                 $process->getOutput(),
                 $process->getErrorOutput()
             );

@@ -30,11 +30,9 @@ class ProcessFailedException extends RuntimeException
         );
 
         if (! empty($result->output())) {
-            $error .= sprintf("\n\nOutput:\n================\n%s", $result->output());
         }
 
         if (! empty($result->errorOutput())) {
-            $error .= sprintf("\n\nError Output:\n================\n%s", $result->errorOutput());
         }
 
         parent::__construct($error, $result->exitCode() ?? 1);
