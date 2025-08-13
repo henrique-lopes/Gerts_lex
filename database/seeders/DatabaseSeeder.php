@@ -11,7 +11,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Primeiro, criar os tenants
+        // Primeiro, criar o usuário administrador
+        $this->call(AdminUserSeeder::class);
+        
+        // Depois, criar os tenants
         $this->call(TenantSeeder::class);
         
         // Depois, para cada tenant, criar os dados específicos
