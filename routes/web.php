@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TenantController;
-use App\Http\Controllers\TenantDashboardController;
-use App\Http\Controllers\TenantUserController;
-use App\Http\Controllers\LawyerController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\LawyerController;
+use App\Http\Controllers\TenantController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TenantUserController;
+use App\Http\Controllers\TenantDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,7 @@ Route::prefix("admin")->name("admin.")->group(function () {
 Route::middleware(["auth", "verified"])->group(function () {
     // Override default dashboard with tenant dashboard
     Route::get("/dashboard", [TenantDashboardController::class, "index"])->name("dashboard");
-    
+
     // Lawyer Dashboard
     Route::get("/lawyer-dashboard", [App\Http\Controllers\LawyerDashboardController::class, "index"])->name("lawyer.dashboard");
 
@@ -42,7 +43,7 @@ Route::middleware(["auth", "verified"])->group(function () {
         Route::get("/settings", [TenantDashboardController::class, "settings"])->name("settings");
         Route::post("/settings", [TenantDashboardController::class, "updateSettings"])->name("settings.update");
         Route::get("/subscription", [TenantDashboardController::class, "subscription"])->name("subscription");
-        
+
         // User management for tenant
         Route::resource("users", TenantUserController::class);
 
@@ -82,11 +83,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 
 
 // Stripe Webhook
 Route::post("stripe/webhook", "\Laravel\Cashier\Http\Controllers\WebhookController@handle");
-
-

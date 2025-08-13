@@ -22,7 +22,7 @@ class TenantDashboardController extends Controller
     public function index()
     {
         $tenant = Tenant::current();
-        
+
         if (!$tenant) {
             abort(404, "Tenant não encontrado");
         }
@@ -37,7 +37,7 @@ class TenantDashboardController extends Controller
             "appointments_count" => \App\Models\Appointment::count(),
             "deadlines_count" => \App\Models\Deadline::count(),
             "documents_count" => \App\Models\CaseDocument::count(),
-            "trial_days_left" => $tenant->trial_ends_at ? 
+            "trial_days_left" => $tenant->trial_ends_at ?
                 now()->diffInDays($tenant->trial_ends_at, false) : null,
             "subscription_status" => $tenant->subscription_status ?? 'trial',
             "subscription_plan" => $tenant->subscription_plan ?? 'basic',
@@ -52,7 +52,7 @@ class TenantDashboardController extends Controller
     public function settings()
     {
         $tenant = Tenant::current();
-        
+
         if (!$tenant) {
             abort(404, "Tenant não encontrado");
         }
@@ -66,7 +66,7 @@ class TenantDashboardController extends Controller
     public function updateSettings(Request $request)
     {
         $tenant = Tenant::current();
-        
+
         if (!$tenant) {
             abort(404, "Tenant não encontrado");
         }
@@ -91,7 +91,7 @@ class TenantDashboardController extends Controller
     public function subscription()
     {
         $tenant = Tenant::current();
-        
+
         if (!$tenant) {
             abort(404, "Tenant não encontrado");
         }
@@ -176,4 +176,3 @@ class TenantDashboardController extends Controller
             ->with("success", "Método de pagamento atualizado com sucesso.");
     }
 }
-
