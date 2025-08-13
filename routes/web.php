@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('guest')->group(function () {
     Route::get('/payment', [PaymentController::class, 'dashboard'])->name('payment.dashboard');
     Route::post('/payment/process', [PaymentController::class, 'process'])->name('payment.process');
+<<<<<<< HEAD
     
     // Specific payment method endpoints
     Route::post('/payment/pix', [PaymentController::class, 'processPixPayment'])->name('payment.pix');
@@ -53,6 +54,10 @@ Route::middleware('guest')->group(function () {
 // Payment Webhook (public access)
 Route::post('/webhook/payment', [PaymentController::class, 'webhook'])->name('payment.webhook');
 
+=======
+});
+
+>>>>>>> 75d276e55e8071ac5037fb79472c91094dcb9e2e
 // Admin routes (landlord) - Super Admin only
 Route::prefix("admin")->name("admin.")->middleware(['auth', 'tenant.access'])->group(function () {
     Route::resource("tenants", TenantController::class);
