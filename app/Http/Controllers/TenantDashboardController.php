@@ -31,20 +31,20 @@ class TenantDashboardController extends Controller
         // Get some basic stats for the dashboard
         $stats = [
             "users_count" => \App\Models\User::count(),
-            "lawyers_count" => \App\Models\Lawyer::count(),
-            "clients_count" => \App\Models\Client::count(),
-            "cases_count" => \App\Models\CaseModel::count(),
-            "fees_count" => \App\Models\Fee::count(),
-            "appointments_count" => \App\Models\Appointment::count(),
-            "deadlines_count" => \App\Models\Deadline::count(),
-            "documents_count" => \App\Models\CaseDocument::count(),
+            "lawyers_count" => 0, // \App\Models\Lawyer::count(),
+            "clients_count" => 0, // \App\Models\Client::count(),
+            "cases_count" => 0, // \App\Models\CaseModel::count(),
+            "fees_count" => 0, // \App\Models\Fee::count(),
+            "appointments_count" => 0, // \App\Models\Appointment::count(),
+            "deadlines_count" => 0, // \App\Models\Deadline::count(),
+            "documents_count" => 0, // \App\Models\CaseDocument::count(),
             "trial_days_left" => $tenant->trial_ends_at ?
                 now()->diffInDays($tenant->trial_ends_at, false) : null,
-            "subscription_status" => $tenant->subscription_status ?? 'trial',
-            "subscription_plan" => $tenant->subscription_plan ?? 'basic',
+            "subscription_status" => $tenant->subscription_status ?? 'active',
+            "subscription_plan" => $tenant->subscription_plan ?? 'premium',
         ];
 
-        return view("tenant.dashboard-simple", compact("tenant", "stats"));
+        return view("tenant.dashboard", compact("tenant", "stats"));
     }
 
     /**
