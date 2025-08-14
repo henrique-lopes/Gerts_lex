@@ -82,40 +82,40 @@ Route::middleware(['auth', 'tenant.access'])->group(function () {
         Route::resource("lawyers", LawyerController::class);
 
         // Client management for tenant
-        Route::resource("clients", ClientController::class);
+        // Route::resource("clients", ClientController::class);
 
         // Case management for tenant
-        Route::resource("cases", CaseController::class);
+        // Route::resource("cases", CaseController::class);
 
         // Fee management for tenant
-        Route::resource("fees", FeeController::class);
+        // Route::resource("fees", FeeController::class);
 
         // Appointment management for tenant
-        Route::resource("appointments", AppointmentController::class);
+        // Route::resource("appointments", AppointmentController::class);
 
         // Deadline management for tenant
-        Route::resource("deadlines", DeadlineController::class);
+        // Route::resource("deadlines", DeadlineController::class);
 
         // Case Document management for tenant
-        Route::resource("case-documents", CaseDocumentController::class);
+        // Route::resource("case-documents", CaseDocumentController::class);
 
         // Invitation system
-        Route::get("/invitations/create", [TenantInvitationController::class, "create"])->name("invitations.create");
-        Route::post("/invitations", [TenantInvitationController::class, "store"])->name("invitations.store");
+        // Route::get("/invitations/create", [TenantInvitationController::class, "create"])->name("invitations.create");
+        // Route::post("/invitations", [TenantInvitationController::class, "store"])->name("invitations.store");
     });
 });
 
 // Premium features - Requires premium plan
 Route::middleware(['auth', 'tenant.access', 'tenant.premium'])->group(function () {
     Route::prefix("premium")->name("premium.")->group(function () {
-        Route::get("/analytics", [AnalyticsController::class, "index"])->name("analytics");
-        Route::get("/reports", [ReportsController::class, "index"])->name("reports");
-        Route::get("/integrations", [IntegrationsController::class, "index"])->name("integrations");
+        // Route::get("/analytics", [AnalyticsController::class, "index"])->name("analytics");
+        // Route::get("/reports", [ReportsController::class, "index"])->name("reports");
+        // Route::get("/integrations", [IntegrationsController::class, "index"])->name("integrations");
     });
 });
 
 // Public route for invited user registration
-Route::get("/register/invited", [TenantInvitationController::class, "showRegistrationForm"])->name("tenant.invitations.register");
+// Route::get("/register/invited", [TenantInvitationController::class, "showRegistrationForm"])->name("tenant.invitations.register");
 
 // Profile routes
 Route::middleware(['auth', 'tenant.access'])->group(function () {

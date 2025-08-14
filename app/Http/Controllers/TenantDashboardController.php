@@ -38,7 +38,6 @@ class TenantDashboardController extends Controller
             "appointments_count" => \App\Models\Appointment::count(),
             "deadlines_count" => \App\Models\Deadline::count(),
             "documents_count" => \App\Models\CaseDocument::count(),
-            "trial_days_left" => $tenant->trial_ends_at ? 
             "trial_days_left" => $tenant->trial_ends_at ?
                 now()->diffInDays($tenant->trial_ends_at, false) : null,
             "subscription_status" => $tenant->subscription_status ?? 'trial',
