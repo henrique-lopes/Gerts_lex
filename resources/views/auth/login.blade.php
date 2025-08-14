@@ -127,7 +127,7 @@
                 <p class="text-legal-600">Acesse sua conta para continuar</p>
             </div>
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-6">
+            <form method="POST" action="/login" class="space-y-6">
                 @csrf
                 
                 <!-- Email Field -->

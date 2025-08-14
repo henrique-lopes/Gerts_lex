@@ -97,11 +97,11 @@ class TenantAuthController extends Controller
 
         // Redireciona baseado no status de pagamento
         if ($paymentStatus === 'trial') {
-            return redirect()->intended(route('tenant.dashboard'))
+            return redirect()->intended(route('dashboard'))
                 ->with('info', 'Você está no período de teste. Considere assinar um plano.');
         }
 
-        return redirect()->intended(route('tenant.dashboard'))
+        return redirect()->intended(route('dashboard'))
             ->with('success', 'Login realizado com sucesso!');
     }
 
