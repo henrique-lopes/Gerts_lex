@@ -60,66 +60,34 @@ Route::prefix("admin")->name("admin.")->middleware(['auth', 'tenant.access'])->g
     Route::post("tenants/{tenant}/update-payment", [TenantAuthController::class, "updatePaymentStatus"])->name("tenants.update-payment");
 });
 
-// Tenant routes - Protected by auth middleware only (temporarily)
-Route::middleware(['auth'])->group(function () {
-    // Main dashboard
-    Route::get("/dashboard", function() {
-        return view("tenant.dashboard-simple", [
-            'tenant' => (object)['name' => 'Administração Gert\'s Lex', 'domain' => 'admin'],
-            'stats' => [
-                'users_count' => 1,
-                'lawyers_count' => 0,
-                'clients_count' => 0,
-                'cases_count' => 0,
-                'fees_count' => 0,
-                'appointments_count' => 0,
-                'deadlines_count' => 0,
-                'documents_count' => 0,
-                'subscription_status' => 'active',
-                'subscription_plan' => 'premium'
-            ]
-        ]);
-    })->name("dashboard");
-    Route::get("/tenant/dashboard", [TenantDashboardController::class, "index"])->name("tenant.dashboard");
+// Tenant routes - Testing without middleware
+// Main dashboard
+Route::get("/dashboard", function() {
+    $tenant = (object)[
+        'name' => 'Administração Gert\'s Lex',
+        'domain' => 'admin',
+        'subscription_status' => 'active',
+        'subscription_plan' => 'premium'
+    ];
     
-    // Lawyer Dashboard
-    Route::get("/lawyer-dashboard", [App\Http\Controllers\LawyerDashboardController::class, "index"])->name("lawyer.dashboard");
+    $stats = [
+        'users_count' => 1,
+        'lawyers_count' => 0,
+        'clients_count' => 0,
+        'cases_count' => 0,
+        'fees_count' => 0,
+        'appointments_count' => 0,
+        'deadlines_count' => 0,
+        'documents_count' => 0,
+        'subscription_status' => 'active',
+        'subscription_plan' => 'premium',
+        'trial_days_left' => null
+    ];
+    
+    return view("tenant.dashboard-final", compact("tenant", "stats"));
+})->name("dashboard");
 
-    // Tenant specific routes
-    Route::prefix("tenant")->name("tenant.")->group(function () {
-        Route::get("/settings", [TenantDashboardController::class, "settings"])->name("settings");
-        Route::post("/settings", [TenantDashboardController::class, "updateSettings"])->name("settings.update");
-        Route::get("/subscription", [TenantDashboardController::class, "subscription"])->name("subscription");
-        
-        // User management for tenant
-        Route::resource("users", TenantUserController::class);
-
-        // Lawyer management for tenant
-        Route::resource("lawyers", LawyerController::class);
-
-        // Client management for tenant
-        // Route::resource("clients", ClientController::class);
-
-        // Case management for tenant
-        // Route::resource("cases", CaseController::class);
-
-        // Fee management for tenant
-        // Route::resource("fees", FeeController::class);
-
-        // Appointment management for tenant
-        // Route::resource("appointments", AppointmentController::class);
-
-        // Deadline management for tenant
-        // Route::resource("deadlines", DeadlineController::class);
-
-        // Case Document management for tenant
-        // Route::resource("case-documents", CaseDocumentController::class);
-
-        // Invitation system
-        // Route::get("/invitations/create", [TenantInvitationController::class, "create"])->name("invitations.create");
-        // Route::post("/invitations", [TenantInvitationController::class, "store"])->name("invitations.store");
-    });
-});
+Route::get("/tenant/dashboard", [TenantDashboardController::class, "index"])->name("tenant.dashboard");
 
 // Premium features - Requires premium plan
 Route::middleware(['auth', 'tenant.access', 'tenant.premium'])->group(function () {
